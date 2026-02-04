@@ -44,9 +44,9 @@ DO NOT:
         # Configure Gemini
         genai.configure(api_key=settings.google_api_key)
         
-        # Use Gemini 1.5 Flash (stable model)
+        # Use Gemini 1.5 Flash Latest (free tier, stable model)
         self.model = genai.GenerativeModel(
-            model_name='gemini-1.5-flash',
+            model_name='gemini-1.5-flash-latest',
             generation_config={
                 'temperature': 0.9,  # Higher temperature for more natural variation
                 'top_p': 0.95,
