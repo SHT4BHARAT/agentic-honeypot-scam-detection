@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     
     # Conversation Settings
     max_conversation_turns: int = 20
-    scam_threshold: float = 0.7
+    scam_threshold: float = 0.5  # Lowered from 0.7 to improve detection
     
     class Config:
         env_file = ".env"
