@@ -57,6 +57,10 @@ coverage.xml
 pdf_content.txt
 read_pdf_doc.py
 
+# Documentation - Local only
+*.pdf
+*.docx
+
 # OS
 .DS_Store
 Thumbs.db
