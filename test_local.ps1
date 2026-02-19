@@ -31,7 +31,7 @@ $body = @{
 
 $headers = @{
     "Content-Type" = "application/json"
-    "x-api-key" = "honeypot_secret_key_2026"
+    "x-api-key" = "your_secret_api_key_here"
 }
 
 try {

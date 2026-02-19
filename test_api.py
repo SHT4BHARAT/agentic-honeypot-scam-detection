@@ -5,7 +5,7 @@ from datetime import datetime
 
 # Configuration
 API_URL = "http://localhost:8000/api/honeypot"
-API_KEY = "honeypot_secret_key_2026"
+API_KEY = "your_secret_api_key_here"
 
 # Test scam messages
 TEST_MESSAGES = [
