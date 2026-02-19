@@ -12,6 +12,12 @@ class IntelligenceExtractor:
     BANK_ACCOUNT_PATTERN = r'\b\d{9,18}\b'
     PHONE_PATTERN = r'(?:\+91|0)?[6-9]\d{9}\b'
     URL_PATTERN = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+    EMAIL_PATTERN = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    
+    # Generic ID patterns
+    CASE_ID_PATTERN = r'(?i)\b(?:case|ref|ticket)\s*(?:id|no|num|number|#)?\s*(?:[:#-]|\bis\b)?\s*([a-z0-9-]{4,})\b'
+    POLICY_NO_PATTERN = r'(?i)\b(?:policy|pol)\s*(?:id|no|num|number|#)?\s*(?:[:#-]|\bis\b)?\s*([a-z0-9-]{4,})\b'
+    ORDER_NO_PATTERN = r'(?i)\b(?:order|ord)\s*(?:id|no|num|number|#)?\s*(?:[:#-]|\bis\b)?\s*([a-z0-9-]{4,})\b'
     
     # Suspicious keywords to track
     SUSPICIOUS_KEYWORDS = [
@@ -40,6 +46,15 @@ class IntelligenceExtractor:
         else:
             intel = existing_intel
         
+        if intel.emailAddresses is None:
+            intel.emailAddresses = []
+        if intel.caseIds is None:
+            intel.caseIds = []
+        if intel.policyNumbers is None:
+            intel.policyNumbers = []
+        if intel.orderNumbers is None:
+            intel.orderNumbers = []
+            
         # Extract UPI IDs
         upi_matches = re.findall(self.UPI_PATTERN, text, re.IGNORECASE)
         for upi in upi_matches:
@@ -64,6 +79,30 @@ class IntelligenceExtractor:
         for url in url_matches:
             if url not in intel.phishingLinks:
                 intel.phishingLinks.append(url)
+                
+        # Extract Email Addresses
+        email_matches = re.findall(self.EMAIL_PATTERN, text)
+        for email in email_matches:
+            if email not in intel.emailAddresses:
+                intel.emailAddresses.append(email)
+                
+        # Extract Case IDs
+        case_matches = re.findall(self.CASE_ID_PATTERN, text)
+        for case_id in case_matches:
+            if case_id not in intel.caseIds:
+                intel.caseIds.append(case_id)
+                
+        # Extract Policy Numbers
+        policy_matches = re.findall(self.POLICY_NO_PATTERN, text)
+        for policy_no in policy_matches:
+            if policy_no not in intel.policyNumbers:
+                intel.policyNumbers.append(policy_no)
+                
+        # Extract Order Numbers
+        order_matches = re.findall(self.ORDER_NO_PATTERN, text)
+        for order_no in order_matches:
+            if order_no not in intel.orderNumbers:
+                intel.orderNumbers.append(order_no)
         
         # Extract suspicious keywords
         text_lower = text.lower()
