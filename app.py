@@ -2,6 +2,7 @@
 import logging
 from fastapi import FastAPI, HTTPException, Header, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from models import HoneypotRequest, HoneypotResponse, FinalResultPayload
@@ -41,6 +42,15 @@ app = FastAPI(
     description="AI-powered honeypot for scam detection and intelligence extraction",
     version="1.0.0",
     lifespan=lifespan
+)
+
+# Allow requests from browsers (live_demo.html, presentation, any origin)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
