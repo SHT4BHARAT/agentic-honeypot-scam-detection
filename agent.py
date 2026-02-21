@@ -111,16 +111,27 @@ DO NOT:
         """Get a fallback response if API fails."""
         message_lower = message.lower()
         
+        # Check context of the message for a better fallback
         if any(word in message_lower for word in ['account', 'bank']):
-            return "Which account? I have savings and pension account. Please tell me."
+            responses = [
+                "Which bank account are you talking about? I have two accounts, one for my pension and one for savings.",
+                "Is it my SBI account? I'm very worried, I just checked it yesterday.",
+                "I have my pension coming in next week. Will this stop my pension from coming?"
+            ]
+            import random
+            return random.choice(responses)
+            
         elif any(word in message_lower for word in ['link', 'click', 'verify']):
-            return "Please send the link. I will click it right away."
+            return "Please send me that link again. I will click it immediately to solve this."
+            
         elif any(word in message_lower for word in ['otp', 'code', 'pin']):
-            return "I didn't receive any OTP. Where should I check?"
+            return "I am looking at my phone, but no OTP has come. Should I wait for 5 minutes?"
+            
         elif any(word in message_lower for word in ['upi', 'payment', 'send']):
-            return "What is the UPI ID? I will send immediately."
+            return "How do I send money? What is the UPI ID I should use?"
+            
         else:
-            return "I'm very worried. What should I do exactly? Please guide me."
+            return "I am not very good with these technical things. Can you please tell me exactly what to do? I'm very stressed."
     
     def analyze_scammer_tactics(self, message: str) -> str:
         """
