@@ -65,7 +65,17 @@ def verify_api_key(x_api_key: str = Header(...)) -> bool:
 async def root(request: Request):
     """Health check endpoint that supports both GET and POST."""
     if request.method == "POST":
-        # If they POSTed to root, they might be using wrong URL in evaluator
+        # Check if this looks like a honeypot request being sent to the root URL
+        try:
+            body = await request.json()
+            x_api_key = request.headers.get("x-api-key")
+            
+            if "sessionId" in body and "message" in body and x_api_key:
+                logger.info("🔀 Redirecting root POST request to /api/honeypot logic")
+                return await honeypot_endpoint(HoneypotRequest(**body), x_api_key)
+        except Exception as e:
+            logger.debug(f"Root POST not a honeypot request: {e}")
+            
         return {
             "status": "online",
             "message": "API is active. Note: Honeypot logic is at /api/honeypot",
