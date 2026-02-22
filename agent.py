@@ -44,9 +44,9 @@ DO NOT:
         # Configure Gemini
         genai.configure(api_key=settings.google_api_key)
         
-        # Use Gemini Flash Latest (stable alias)
+        # Use Gemini 2.0 Flash (more stable and higher quota)
         self.model = genai.GenerativeModel(
-            model_name='gemini-flash-latest',
+            model_name='gemini-2.0-flash',
             generation_config={
                 'temperature': 0.9,  # Higher temperature for more natural variation
                 'top_p': 0.95,
@@ -110,28 +110,54 @@ DO NOT:
     def _get_fallback_response(self, message: str) -> str:
         """Get a fallback response if API fails."""
         message_lower = message.lower()
+        import random
         
         # Check context of the message for a better fallback
-        if any(word in message_lower for word in ['account', 'bank']):
+        if any(word in message_lower for word in ['account', 'bank', 'pension', 'frozen', 'lock']):
             responses = [
                 "Which bank account are you talking about? I have two accounts, one for my pension and one for savings.",
                 "Is it my SBI account? I'm very worried, I just checked it yesterday.",
-                "I have my pension coming in next week. Will this stop my pension from coming?"
+                "I have my pension coming in next week. Will this stop my pension from coming?",
+                "Oh no, please don't lock my account. I need that money for my medicine.",
+                "How can I check if it's already locked? Which bank website should I go to?"
             ]
-            import random
             return random.choice(responses)
             
-        elif any(word in message_lower for word in ['link', 'click', 'verify']):
-            return "Please send me that link again. I will click it immediately to solve this."
+        elif any(word in message_lower for word in ['link', 'click', 'verify', 'website', 'url']):
+            responses = [
+                "Please send me that link again. I will click it immediately to solve this.",
+                "Is the link safe? I am not good with opening websites on my phone.",
+                "I clicked it but it says 'Server Error'. Is there another link?",
+                "Wait, do I have to open it on my computer or mobile?"
+            ]
+            return random.choice(responses)
             
-        elif any(word in message_lower for word in ['otp', 'code', 'pin']):
-            return "I am looking at my phone, but no OTP has come. Should I wait for 5 minutes?"
+        elif any(word in message_lower for word in ['otp', 'code', 'pin', 'number']):
+            responses = [
+                "I am looking at my phone, but no OTP has come. Should I wait for 5 minutes?",
+                "Which number did you send the code to? Ending with 4321?",
+                "I am getting too many SMS messages, which one is the real code?",
+                "My phone is very old, sometimes it doesn't show the code clearly."
+            ]
+            return random.choice(responses)
             
-        elif any(word in message_lower for word in ['upi', 'payment', 'send']):
-            return "How do I send money? What is the UPI ID I should use?"
+        elif any(word in message_lower for word in ['upi', 'payment', 'send', 'pay', 'money', 'qr']):
+            responses = [
+                "How do I send money? What is the UPI ID I should use?",
+                "Can I pay with cash or cheque? I don't use UPI often.",
+                "Is this the payment for my electricity bill? I'm so confused.",
+                "My daughter usually does the payments. Can I send you her number?"
+            ]
+            return random.choice(responses)
             
         else:
-            return "I am not very good with these technical things. Can you please tell me exactly what to do? I'm very stressed."
+            responses = [
+                "I am not very good with these technical things. Can you please tell me exactly what to do? I'm very stressed.",
+                "Wait, who is this speaking? Is this the Bank Manager?",
+                "Please don't be angry with me. I am trying my best to follow your steps.",
+                "Can you speak a bit slower? I am writing everything down in my notebook."
+            ]
+            return random.choice(responses)
     
     def analyze_scammer_tactics(self, message: str) -> str:
         """
