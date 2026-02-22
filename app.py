@@ -61,9 +61,17 @@ def verify_api_key(x_api_key: str = Header(...)) -> bool:
     return True
 
 
-@app.get("/")
-async def root():
-    """Health check endpoint."""
+@app.api_route("/", methods=["GET", "POST"])
+async def root(request: Request):
+    """Health check endpoint that supports both GET and POST."""
+    if request.method == "POST":
+        # If they POSTed to root, they might be using wrong URL in evaluator
+        return {
+            "status": "online",
+            "message": "API is active. Note: Honeypot logic is at /api/honeypot",
+            "active_sessions": session_manager.get_active_sessions_count()
+        }
+    
     return {
         "status": "online",
         "service": "Agentic Honey-Pot",
