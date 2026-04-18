@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "live_demo.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/live_demo.html"
+    },
+    {
+      "src": "/demo",
+      "dest": "/live_demo.html"
+    }
+  ]
+}

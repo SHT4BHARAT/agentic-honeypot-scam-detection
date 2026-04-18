@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🍯 Honey-Pot Live Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --amber: #F59E0B;
+            --green: #10B981;
+            --red: #EF4444;
+            --blue: #3B82F6;
+            --purple: #8B5CF6;
+            --dark: #0D0D1A;
+            --card: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.09);
+            --text: #F1F5F9;
+            --muted: #94A3B8;
+        }
+
+        html,
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+        }
+
+        /* ── TOP BAR ── */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(13, 13, 26, 0.9);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .logo-sub {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--card);
+        }
+
+        .dot-live {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #64748B;
+        }
+
+        .dot-live.online {
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: blink 1.5s ease infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .4
+            }
+        }
+
+        /* ── LAYOUT ── */
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            padding: 28px 32px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── PANEL ── */
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .panel-body {
+            padding: 22px;
+        }
+
+        /* ── SCENARIO CARDS ── */
+        .scenario-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .scenario {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all .2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scenario:hover {
+            border-color: var(--amber);
+            background: rgba(245, 158, 11, .05);
+            transform: translateX(4px);
+        }
+
+        .scenario.selected {
+            border-color: var(--amber);
+            background: rgba(245, 158, 11, .08);
+            box-shadow: 0 0 20px rgba(245, 158, 11, .1);
+        }
+
+        .scenario-tag {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--amber);
+            margin-bottom: 6px;
+        }
+
+        .scenario-text {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.55;
+            font-style: italic;
+        }
+
+        .scenario-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+
+        .sb-bank {
+            background: rgba(59, 130, 246, .15);
+            color: var(--blue);
+        }
+
+        .sb-upi {
+            background: rgba(245, 158, 11, .15);
+            color: var(--amber);
+        }
+
+        .sb-prize {
+            background: rgba(139, 92, 246, .15);
+            color: var(--purple);
+        }
+
+        .sb-rbi {
+            background: rgba(239, 68, 68, .15);
+            color: var(--red);
+        }
+
+        .sb-custom {
+            background: rgba(16, 185, 129, .15);
+            color: var(--green);
+        }
+
+        /* custom input */
+        .custom-area {
+            margin-top: 10px;
+            display: none;
+        }
+
+        .custom-area textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, .3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        .custom-area textarea:focus {
+            border-color: var(--amber);
+        }
+
+        /* send btn */
+        .send-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--amber), #f97316);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all .2s;
+            letter-spacing: .5px;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(245, 158, 11, .3);
+        }
+
+        .send-btn:active {
+            transform: translateY(0);
+        }
+
+        .send-btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* API config */
+        .config-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .config-input {
+            flex: 1;
+            background: rgba(0, 0, 0, .3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        .config-input:focus {
+            border-color: var(--blue);
+        }
+
+        .config-label {
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ── CONVERSATION PANEL ── */
+        .chat-scroll {
+            max-height: 320px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .msg {
+            display: flex;
+            gap: 10px;
+            animation: msgIn .3s ease both;
+        }
+
+        @keyframes msgIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .msg-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .msg-scammer .msg-avatar {
+            background: rgba(239, 68, 68, .2);
+        }
+
+        .msg-agent .msg-avatar {
+            background: rgba(245, 158, 11, .2);
+        }
+
+        .msg-bubble {
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.6;
+            max-width: 85%;
+        }
+
+        .msg-scammer .msg-bubble {
+            background: rgba(239, 68, 68, .1);
+            border: 1px solid rgba(239, 68, 68, .2);
+            border-radius: 4px 14px 14px 14px;
+        }
+
+        .msg-agent .msg-bubble {
+            background: rgba(245, 158, 11, .1);
+            border: 1px solid rgba(245, 158, 11, .2);
+            border-radius: 14px 4px 14px 14px;
+        }
+
+        .msg-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .msg-scammer .msg-label {
+            color: var(--red);
+        }
+
+        .msg-agent .msg-label {
+            color: var(--amber);
+        }
+
+        .chat-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* typing indicator */
+        .typing {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 14px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--amber);
+            animation: typingAnim 1s ease infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: .15s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: .3s;
+        }
+
+        @keyframes typingAnim {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0)
+            }
+
+            30% {
+                transform: translateY(-6px)
+            }
+        }
+
+        /* ── INTELLIGENCE REPORT ── */
+        .intel-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .intel-item {
+            background: rgba(0, 0, 0, .25);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .intel-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .intel-value {
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        .intel-empty {
+            color: var(--muted);
+            font-weight: 400;
+            font-size: 12px;
+        }
+
+        .intel-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin: 2px;
+        }
+
+        /* score ring */
+        .score-wrap {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .score-ring {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        .score-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-ring circle {
+            fill: none;
+            stroke-width: 7;
+        }
+
+        .score-ring .bg-ring {
+            stroke: rgba(255, 255, 255, .08);
+        }
+
+        .score-ring .fg-ring {
+            stroke: var(--green);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .score-num {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .score-meta {
+            flex: 1;
+        }
+
+        .score-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .score-sub {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* alert banner */
+        .alert-banner {
+            display: none;
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .alert-scam {
+            background: rgba(239, 68, 68, .15);
+            border: 1px solid rgba(239, 68, 68, .3);
+            color: var(--red);
+        }
+
+        .alert-clean {
+            background: rgba(16, 185, 129, .15);
+            border: 1px solid rgba(16, 185, 129, .3);
+            color: var(--green);
+        }
+
+        .alert-waiting {
+            background: rgba(245, 158, 11, .1);
+            border: 1px solid rgba(245, 158, 11, .2);
+            color: var(--amber);
+        }
+
+        /* tactic pills */
+        .tactic {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 3px;
+        }
+
+        .tactic-urgency {
+            background: rgba(239, 68, 68, .15);
+            color: var(--red);
+        }
+
+        .tactic-fear {
+            background: rgba(239, 68, 68, .15);
+            color: var(--red);
+        }
+
+        .tactic-reward {
+            background: rgba(139, 92, 246, .15);
+            color: var(--purple);
+        }
+
+        .tactic-phishing {
+            background: rgba(59, 130, 246, .15);
+            color: var(--blue);
+        }
+
+        .tactic-credential {
+            background: rgba(245, 158, 11, .15);
+            color: var(--amber);
+        }
+
+        .tactic-authority {
+            background: rgba(16, 185, 129, .15);
+            color: var(--green);
+        }
+
+        /* reset btn */
+        .reset-btn {
+            width: 100%;
+            margin-top: 14px;
+            padding: 11px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* follow-up bar */
+        .followup-bar {
+            display: none;
+            margin-top: 14px;
+            gap: 8px;
+            align-items: center;
+            padding: 10px 14px;
+            background: rgba(245, 158, 11, .06);
+            border: 1px solid rgba(245, 158, 11, .25);
+            border-radius: 12px;
+        }
+
+        .followup-bar.visible {
+            display: flex;
+        }
+
+        .followup-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .followup-bar input::placeholder {
+            color: var(--muted);
+        }
+
+        .followup-send {
+            padding: 7px 16px;
+            background: var(--amber);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity .2s;
+            white-space: nowrap;
+        }
+
+        .followup-send:hover {
+            opacity: .8;
+        }
+
+        .followup-send:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .turn-counter {
+            font-size: 11px;
+            color: var(--muted);
+            text-align: right;
+            margin-top: 6px;
+        }
+
+        /* full-width bottom panel */
+        .full-row {
+            grid-column: 1 / -1;
+        }
+
+        /* section divider */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 16px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="logo">
+            <div class="logo-icon">🍯</div>
+            <div>
+                <div class="logo-text">Agentic Honey-Pot <span style="color:var(--amber)">Live Demo</span></div>
+                <div class="logo-sub">Scam Detection · AI Engagement · Intelligence Extraction</div>
+            </div>
+        </div>
+        <div class="status-pill">
+            <div class="dot-live" id="statusDot"></div>
+            <span id="statusText" style="color:var(--muted)">Checking server…</span>
+        </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main">
+
+        <!-- LEFT: SEND A SCAM -->
+        <div>
+            <div class="panel">
+                <div class="panel-header">
+                    <span style="font-size:20px;">🎯</span>
+                    <div>
+                        <div class="panel-title">Send a Scam Message</div>
+                        <div style="font-size:11px;color:var(--muted);">Pick a preset scenario or write your own</div>
+                    </div>
+                </div>
+                <div class="panel-body">
+
+                    <!-- API Config -->
+                    <div class="config-label">API Endpoint</div>
+                    <div class="config-row">
+                        <input class="config-input" id="apiUrl" value="https://honeypot-scam-detection.onrender.com" placeholder="https://your-app.onrender.com"
+                            style="flex:2;" />
+                        <input class="config-input" id="apiKey" value="HoneyPotSecretKey2026" placeholder="API Key"
+                            style="flex:1;" />
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Scenario Selector -->
+                    <div class="scenario-grid" id="scenarios">
+
+                        <div class="scenario selected" data-id="bank" onclick="selectScenario(this)">
+                            <span class="scenario-badge sb-bank">BANK</span>
+                            <div class="scenario-tag">🏦 Bank Account Threat</div>
+                            <div class="scenario-text">"Your SBI account has been blocked due to suspicious activity.
+                                Call our helpline 9876543210 or click http://sbi-secure-verify.net immediately or
+                                account will be permanently suspended."</div>
+                        </div>
+
+                        <div class="scenario" data-id="upi" onclick="selectScenario(this)">
+                            <span class="scenario-badge sb-upi">UPI</span>
+                            <div class="scenario-tag">💸 UPI Refund Scam</div>
+                            <div class="scenario-text">"Dear customer, your refund of Rs.4999 is ready. Please send Rs.5
+                                as token amount to fraudscammer@paytm to process the refund to your account
+                                immediately."</div>
+                        </div>
+
+                        <div class="scenario" data-id="prize" onclick="selectScenario(this)">
+                            <span class="scenario-badge sb-prize">PRIZE</span>
+                            <div class="scenario-tag">🎰 Prize / Lottery Scam</div>
+                            <div class="scenario-text">"Congratulations! You have won Rs.5,00,000 in our KBC lucky draw.
+                                Send your Aadhaar number and OTP to winner@gpay to claim your prize within 24 hours."
+                            </div>
+                        </div>
+
+                        <div class="scenario" data-id="rbi" onclick="selectScenario(this)">
+                            <span class="scenario-badge sb-rbi">RBI</span>
+                            <div class="scenario-tag">👮 RBI / Authority Impersonation</div>
+                            <div class="scenario-text">"This is RBI Cyber Crime Officer Sharma. Case ID: RBI-2024-7823.
+                                Your account is under investigation for illegal transactions. Share your CVV and PIN
+                                immediately or face legal action and arrest."</div>
+                        </div>
+
+                        <div class="scenario" data-id="custom" onclick="selectScenario(this)">
+                            <span class="scenario-badge sb-custom">CUSTOM</span>
+                            <div class="scenario-tag">✏️ Write Your Own</div>
+                            <div class="scenario-text">Type any scam message and see the system respond.</div>
+                            <div class="custom-area" id="customArea">
+                                <textarea id="customText" placeholder="Type a fake scam message here…"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        🚀 &nbsp; Launch Honey-Pot
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: LIVE CONVERSATION -->
+        <div>
+            <div class="panel" style="height:100%;">
+                <div class="panel-header">
+                    <span style="font-size:20px;">💬</span>
+                    <div>
+                        <div class="panel-title">Live Conversation</div>
+                        <div style="font-size:11px;color:var(--muted);">Watching the AI engage the scammer in real-time
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="alertBanner" class="alert-banner alert-waiting">
+                        ⏳ Send a scam message to start the honey-pot…
+                    </div>
+                    <div class="chat-scroll" id="chatScroll">
+                        <div class="chat-empty" id="chatEmpty">
+                            🍯 No conversation yet.<br />Pick a scam scenario on the left and hit Launch!
+                        </div>
+                    </div>
+                    <div class="typing" id="typingIndicator" style="margin-top:10px;">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <span style="font-size:11px;color:var(--muted);margin-left:4px;">Rajesh is typing…</span>
+                    </div>
+
+                    <!-- Multi-turn follow-up bar -->
+                    <div class="followup-bar" id="followupBar">
+                        <span style="font-size:16px;">😈</span>
+                        <input id="followupText"
+                            placeholder="Continue the scam — type your next message as the scammer…"
+                            onkeydown="if(event.key==='Enter') sendFollowUp()" />
+                        <button class="followup-send" id="followupBtn" onclick="sendFollowUp()">Send ↵</button>
+                    </div>
+                    <div class="turn-counter" id="turnCounter"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM: INTELLIGENCE REPORT (full width) -->
+        <div class="full-row">
+            <div class="panel">
+                <div class="panel-header">
+                    <span style="font-size:20px;">📋</span>
+                    <div>
+                        <div class="panel-title">Intelligence Report</div>
+                        <div style="font-size:11px;color:var(--muted);">Automatically extracted from the scammer's
+                            messages</div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <!-- Score -->
+                    <div class="score-wrap">
+                        <div class="score-ring">
+                            <svg width="80" height="80" viewBox="0 0 80 80">
+                                <circle class="bg-ring" cx="40" cy="40" r="32" />
+                                <circle class="fg-ring" id="scoreCircle" cx="40" cy="40" r="32" stroke-dasharray="201"
+                                    stroke-dashoffset="201" />
+                            </svg>
+                            <div class="score-num" id="scoreNum">—</div>
+                        </div>
+                        <div class="score-meta">
+                            <div class="score-title" id="scoreTitle">Awaiting analysis…</div>
+                            <div class="score-sub" id="scoreSub">Send a message to see the scam confidence score and
+                                extracted intelligence.</div>
+                        </div>
+
+                        <!-- Tactics -->
+                        <div id="tacticsWrap" style="flex:1;text-align:right;"></div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Intel Grid -->
+                    <div class="intel-grid">
+                        <div class="intel-item">
+                            <div class="intel-label">🔗 Phishing Links</div>
+                            <div class="intel-value" id="intelLinks"><span class="intel-empty">None found yet</span>
+                            </div>
+                        </div>
+                        <div class="intel-item">
+                            <div class="intel-label">📱 Phone Numbers</div>
+                            <div class="intel-value" id="intelPhones"><span class="intel-empty">None found yet</span>
+                            </div>
+                        </div>
+                        <div class="intel-item">
+                            <div class="intel-label">💸 UPI IDs</div>
+                            <div class="intel-value" id="intelUpi"><span class="intel-empty">None found yet</span></div>
+                        </div>
+                        <div class="intel-item">
+                            <div class="intel-label">🏦 Bank Accounts</div>
+                            <div class="intel-value" id="intelBank"><span class="intel-empty">None found yet</span>
+                            </div>
+                        </div>
+                        <div class="intel-item">
+                            <div class="intel-label">📋 Case / Reference IDs</div>
+                            <div class="intel-value" id="intelCase"><span class="intel-empty">None found yet</span>
+                            </div>
+                        </div>
+                        <div class="intel-item">
+                            <div class="intel-label">🚨 Suspicious Keywords</div>
+                            <div class="intel-value" id="intelKeywords"><span class="intel-empty">None found yet</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="reset-btn" onclick="resetDemo()">🔄 Reset Demo</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ── PRESET MESSAGES ──
+        const PRESETS = {
+            bank: "Your SBI account has been blocked due to suspicious activity. Call our helpline 9876543210 or click http://sbi-secure-verify.net immediately or account will be permanently suspended.",
+            upi: "Dear customer, your refund of Rs.4999 is ready. Please send Rs.5 as token amount to fraudscammer@paytm to process the refund to your account immediately.",
+            prize: "Congratulations! You have won Rs.5,00,000 in our KBC lucky draw. Send your Aadhaar number and OTP to winner@gpay to claim your prize within 24 hours.",
+            rbi: "This is RBI Cyber Crime Officer Sharma. Case ID: RBI-2024-7823. Your account is under investigation for illegal transactions. Share your CVV and PIN immediately or face legal action and arrest.",
+            custom: null
+        };
+
+        let selectedScenario = 'bank';
+        let sessionId = 'demo-' + Date.now();
+        let convHistory = [];
+        let roundNum = 0;
+        let localIntel = { links: [], phones: [], upi: [], bank: [], caseIds: [], keywords: [] };
+        let scamScore = 0;
+
+        function selectScenario(el) {
+            document.querySelectorAll('.scenario').forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedScenario = el.dataset.id;
+            document.getElementById('customArea').style.display = selectedScenario === 'custom' ? 'block' : 'none';
+        }
+
+        // ── SERVER STATUS CHECK ──
+        async function checkServer() {
+            const base = document.getElementById('apiUrl').value.trim();
+            try {
+                const r = await fetch(base + '/', { signal: AbortSignal.timeout(3000) });
+                if (r.ok) {
+                    document.getElementById('statusDot').classList.add('online');
+                    document.getElementById('statusText').textContent = 'Server Online ✓';
+                    document.getElementById('statusText').style.color = 'var(--green)';
+                } else { setOffline(); }
+            } catch { setOffline(); }
+        }
+        function setOffline() {
+            document.getElementById('statusDot').classList.remove('online');
+            document.getElementById('statusText').textContent = 'Server Offline — check Railway URL above';
+            document.getElementById('statusText').style.color = 'var(--red)';
+        }
+        checkServer();
+        setInterval(checkServer, 8000);
+
+        // ── SEND MESSAGE ──
+        async function sendMessage() {
+            const base = document.getElementById('apiUrl').value.trim();
+            const key = document.getElementById('apiKey').value.trim();
+            let msgText = selectedScenario === 'custom'
+                ? document.getElementById('customText').value.trim()
+                : PRESETS[selectedScenario];
+
+            if (!msgText) { alert('Please enter a scam message.'); return; }
+
+            // hide empty state, show alert
+            document.getElementById('chatEmpty').style.display = 'none';
+            showAlert('waiting', '⏳ Honey-pot engaged! Rajesh is reading the message…');
+
+            // show scammer message
+            addMessage('scammer', msgText);
+
+            // show typing
+            showTyping(true);
+            document.getElementById('sendBtn').disabled = true;
+
+            // extract intel locally (optimistic)
+            extractLocalIntel(msgText);
+
+            const payload = {
+                sessionId: sessionId,
+                message: { sender: "scammer", text: msgText, timestamp: Date.now() },
+                conversationHistory: convHistory,
+                metadata: { channel: "SMS", language: "English", locale: "IN" }
+            };
+
+            try {
+                const res = await fetch(base + '/api/honeypot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': key },
+                    body: JSON.stringify(payload),
+                    signal: AbortSignal.timeout(20000)
+                });
+
+                const data = await res.json();
+                showTyping(false);
+
+                if (res.ok && data.reply) {
+                    addMessage('agent', data.reply);
+                    convHistory.push({ sender: 'scammer', text: msgText, timestamp: Date.now() });
+                    convHistory.push({ sender: 'user', text: data.reply, timestamp: Date.now() });
+                    roundNum++;
+
+                    // update score UI based on detected keywords
+                    updateScore(msgText);
+                    showAlert('scam', '🚨 SCAM DETECTED — Honey-pot active! Evidence being collected…');
+
+                    // show follow-up bar after first reply
+                    document.getElementById('followupBar').classList.add('visible');
+                    document.getElementById('followupText').focus();
+                    updateTurnCounter();
+                } else {
+                    addMessage('agent', data.message || 'Could not get a response from the AI.');
+                    showAlert('clean', '✅ Message processed — Low scam confidence or API error.');
+                }
+            } catch (e) {
+                showTyping(false);
+                addMessage('agent', '⚠️ Connection failed. Check: (1) Is the Railway URL correct? (2) Is the API key correct? (3) Is CORS enabled on the server?');
+                showAlert('waiting', '⚠️ Connection failed — is the server running?');
+            }
+
+            document.getElementById('sendBtn').disabled = false;
+            updateIntelUI();
+        }
+
+        // ── CHAT HELPERS ──
+        function addMessage(role, text) {
+            const scroll = document.getElementById('chatScroll');
+            const div = document.createElement('div');
+            div.className = 'msg msg-' + (role === 'scammer' ? 'scammer' : 'agent');
+            div.innerHTML = `
+      <div class="msg-avatar">${role === 'scammer' ? '😈' : '👴'}</div>
+      <div>
+        <div class="msg-label">${role === 'scammer' ? '⚠️ SCAMMER' : '🤖 RAJESH (AI)'}</div>
+        <div class="msg-bubble">${escHtml(text)}</div>
+      </div>`;
+            scroll.appendChild(div);
+            scroll.scrollTop = scroll.scrollHeight;
+        }
+
+        function showTyping(show) {
+            document.getElementById('typingIndicator').style.display = show ? 'flex' : 'none';
+        }
+
+        function showAlert(type, msg) {
+            const el = document.getElementById('alertBanner');
+            el.className = 'alert-banner alert-' + type;
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        // ── INTEL EXTRACTION (client-side preview) ──
+        function extractLocalIntel(text) {
+            // URLs
+            const urls = text.match(/https?:\/\/[^\s]+/g) || [];
+            urls.forEach(u => { if (!localIntel.links.includes(u)) localIntel.links.push(u); });
+            // Phones — extract clean 10-digit numbers starting with 6-9
+            const phones = text.match(/(?:\+91|0)?[6-9]\d{9}/g) || [];
+            phones.forEach(p => { if (!localIntel.phones.includes(p)) localIntel.phones.push(p); });
+            // UPI
+            const upi = text.match(/[a-zA-Z0-9._-]+@(?:paytm|phonepe|gpay|ybl|okaxis|okicici|oksbi|upi|okhdfcbank)/gi) || [];
+            upi.forEach(u => { if (!localIntel.upi.includes(u)) localIntel.upi.push(u); });
+            // Bank accounts — must be 11-18 digits (not 10, to avoid phone number overlap)
+            // Also exclude numbers already captured as phone numbers
+            const phoneDigits = phones.map(p => p.replace(/\D/g, '').slice(-10));
+            const banks = text.match(/\b\d{11,18}\b/g) || [];
+            banks.forEach(b => {
+                const isPhone = phoneDigits.some(pd => b.includes(pd));
+                if (!isPhone && !b.startsWith('17') && !b.startsWith('16') && !b.startsWith('20') && !localIntel.bank.includes(b))
+                    localIntel.bank.push(b);
+            });
+            // Case IDs
+            const cases = text.match(/(?:case|ref|ticket)[:\s#-]*([A-Z0-9-]{4,})/gi) || [];
+            cases.forEach(c => { if (!localIntel.caseIds.includes(c)) localIntel.caseIds.push(c); });
+            // Keywords
+            const kw = ['urgent', 'otp', 'cvv', 'pin', 'blocked', 'suspended', 'arrest', 'legal', 'prize', 'refund', 'verify'];
+            kw.forEach(k => { if (text.toLowerCase().includes(k) && !localIntel.keywords.includes(k)) localIntel.keywords.push(k); });
+        }
+
+        function updateScore(text) {
+            // Evaluate ALL scammer messages so far (accumulated full picture)
+            const allScammerText = [
+                ...convHistory.filter(m => m.sender === 'scammer').map(m => m.text),
+                text  // include the current message being sent
+            ].join(' ').toLowerCase();
+
+            const kw = ['urgent', 'immediately', 'blocked', 'suspended', 'otp', 'cvv', 'pin',
+                'prize', 'legal', 'arrest', 'verify', 'paytm', 'gpay', 'phonepe', 'upi',
+                'refund', 'winner', 'congratulations', 'penalty', 'fine', 'rbi', 'police'];
+            // Count unique keywords found across all messages
+            const matchedKw = kw.filter(k => allScammerText.includes(k));
+            const hasUrl = /https?:\/\//.test(allScammerText);
+            const hasPhone = /[6-9]\d{9}/.test(allScammerText);
+            const hasUpi = /@(?:paytm|phonepe|gpay|ybl|okaxis|oksbi|upi)/.test(allScammerText);
+            // Score grows with each turn — base score from unique keywords + bonuses
+            const rawScore = matchedKw.length * 10 + (hasUrl ? 20 : 0) + (hasPhone ? 15 : 0) + (hasUpi ? 15 : 0) + (roundNum * 3);
+            scamScore = Math.min(100, rawScore);
+
+            // ring
+            const circumference = 201;
+            const offset = circumference - (scamScore / 100) * circumference;
+            const ring = document.getElementById('scoreCircle');
+            ring.style.strokeDashoffset = offset;
+            ring.style.stroke = scamScore > 70 ? 'var(--red)' : scamScore > 40 ? 'var(--amber)' : 'var(--green)';
+
+            document.getElementById('scoreNum').textContent = scamScore + '%';
+            document.getElementById('scoreNum').style.color = scamScore > 70 ? 'var(--red)' : scamScore > 40 ? 'var(--amber)' : 'var(--green)';
+            document.getElementById('scoreTitle').textContent = scamScore > 70 ? '🚨 HIGH RISK — Scam Confirmed' : scamScore > 40 ? '⚠️ SUSPICIOUS — Possible Scam' : '✅ Low Risk';
+            document.getElementById('scoreSub').textContent = `Confidence score based on ${Object.values(localIntel).flat().length} indicators detected.`;
+
+            // tactics
+            const tactics = [];
+            if (/urgent|immediately|right now/i.test(text)) tactics.push(['urgency', '⏰ Urgency']);
+            if (/blocked|suspended|deactivated/i.test(text)) tactics.push(['fear', '😱 Fear']);
+            if (/prize|winner|congratulations|refund/i.test(text)) tactics.push(['reward', '🎰 Reward Bait']);
+            if (/https?:\/\//i.test(text)) tactics.push(['phishing', '🔗 Phishing Link']);
+            if (/otp|cvv|pin|password/i.test(text)) tactics.push(['credential', '🔑 Credential Phishing']);
+            if (/rbi|police|officer|government|income tax/i.test(text)) tactics.push(['authority', '👮 Authority']);
+            const wrap = document.getElementById('tacticsWrap');
+            wrap.innerHTML = tactics.map(([cls, label]) => `<span class="tactic tactic-${cls}">${label}</span>`).join('');
+        }
+
+        function updateIntelUI() {
+            const fmt = (arr, color = 'var(--amber)') => arr.length
+                ? arr.map(v => `<span class="intel-tag" style="background:rgba(245,158,11,.1);color:${color};border:1px solid rgba(245,158,11,.2);">${escHtml(v)}</span>`).join('')
+                : '<span class="intel-empty">None found yet</span>';
+
+            document.getElementById('intelLinks').innerHTML = localIntel.links.length ? localIntel.links.map(u => `<span class="intel-tag" style="background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.2);">${escHtml(u)}</span>`).join('') : '<span class="intel-empty">None found yet</span>';
+            document.getElementById('intelPhones').innerHTML = localIntel.phones.length ? localIntel.phones.map(p => `<span class="intel-tag" style="background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.2);">${escHtml(p)}</span>`).join('') : '<span class="intel-empty">None found yet</span>';
+            document.getElementById('intelUpi').innerHTML = localIntel.upi.length ? localIntel.upi.map(u => `<span class="intel-tag" style="background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2);">${escHtml(u)}</span>`).join('') : '<span class="intel-empty">None found yet</span>';
+            document.getElementById('intelBank').innerHTML = localIntel.bank.length ? localIntel.bank.map(b => `<span class="intel-tag" style="background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2);">${escHtml(b)}</span>`).join('') : '<span class="intel-empty">None found yet</span>';
+            document.getElementById('intelCase').innerHTML = localIntel.caseIds.length ? localIntel.caseIds.map(c => `<span class="intel-tag" style="background:rgba(139,92,246,.1);color:var(--purple);border:1px solid rgba(139,92,246,.2);">${escHtml(c)}</span>`).join('') : '<span class="intel-empty">None found yet</span>';
+            document.getElementById('intelKeywords').innerHTML = localIntel.keywords.length ? localIntel.keywords.map(k => `<span class="intel-tag" style="background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);">${escHtml(k)}</span>`).join('') : '<span class="intel-empty">None found yet</span>';
+        }
+
+        // ── FOLLOW-UP TURN ──
+        async function sendFollowUp() {
+            const text = document.getElementById('followupText').value.trim();
+            if (!text) return;
+            document.getElementById('followupText').value = '';
+            document.getElementById('followupBtn').disabled = true;
+
+            addMessage('scammer', text);
+            showTyping(true);
+            extractLocalIntel(text);
+            updateScore(text);
+            showAlert('scam', '🚨 SCAM DETECTED — Honey-pot active! Evidence being collected…');
+
+            const base = document.getElementById('apiUrl').value.trim();
+            const key = document.getElementById('apiKey').value.trim();
+            const payload = {
+                sessionId: sessionId,
+                message: { sender: 'scammer', text: text, timestamp: Date.now() },
+                conversationHistory: convHistory,
+                metadata: { channel: 'SMS', language: 'English', locale: 'IN' }
+            };
+
+            try {
+                const res = await fetch(base + '/api/honeypot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': key },
+                    body: JSON.stringify(payload),
+                    signal: AbortSignal.timeout(20000)
+                });
+                const data = await res.json();
+                showTyping(false);
+                if (res.ok && data.reply) {
+                    addMessage('agent', data.reply);
+                    convHistory.push({ sender: 'scammer', text: text, timestamp: Date.now() });
+                    convHistory.push({ sender: 'user', text: data.reply, timestamp: Date.now() });
+                    roundNum++;
+                    updateTurnCounter();
+                    updateIntelUI();
+                } else {
+                    addMessage('agent', data.message || 'No reply from AI.');
+                }
+            } catch (e) {
+                showTyping(false);
+                addMessage('agent', '⚠️ Connection failed. Check Railway URL and API key.');
+            }
+
+            document.getElementById('followupBtn').disabled = false;
+            document.getElementById('followupText').focus();
+            updateIntelUI();
+        }
+
+        function updateTurnCounter() {
+            document.getElementById('turnCounter').textContent = roundNum > 0
+                ? `Turn ${roundNum} — Rajesh has responded ${roundNum} time${roundNum > 1 ? 's' : ''} · Intelligence growing…`
+                : '';
+        }
+
+        // ── RESET ──
+        function resetDemo() {
+            sessionId = 'demo-' + Date.now();
+            convHistory = []; roundNum = 0;
+            localIntel = { links: [], phones: [], upi: [], bank: [], caseIds: [], keywords: [] };
+            scamScore = 0;
+
+            document.getElementById('chatScroll').innerHTML = '<div class="chat-empty" id="chatEmpty">🍯 No conversation yet.<br/>Pick a scam scenario on the left and hit Launch!</div>';
+            document.getElementById('alertBanner').style.display = 'none';
+            document.getElementById('scoreCircle').style.strokeDashoffset = 201;
+            document.getElementById('scoreCircle').style.stroke = 'var(--green)';
+            document.getElementById('scoreNum').textContent = '—';
+            document.getElementById('scoreNum').style.color = 'var(--text)';
+            document.getElementById('scoreTitle').textContent = 'Awaiting analysis…';
+            document.getElementById('scoreSub').textContent = 'Send a message to see the scam confidence score and extracted intelligence.';
+            document.getElementById('tacticsWrap').innerHTML = '';
+            document.getElementById('followupBar').classList.remove('visible');
+            document.getElementById('followupText').value = '';
+            document.getElementById('turnCounter').textContent = '';
+            updateIntelUI();
+        }
+    </script>
+</body>
+
+</html>
