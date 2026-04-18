@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: honeypot-scam-detection
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: LLM_PROVIDER
+        value: gemini
+      - key: MAX_CONVERSATION_TURNS
+        value: "20"
+      - key: SCAM_THRESHOLD
+        value: "0.7"
+      - key: GOOGLE_API_KEY
+        sync: false   # Set manually in Render dashboard (secret)
+      - key: API_KEY
+        sync: false   # Set manually in Render dashboard (secret)
+      - key: GUVI_CALLBACK_URL
+        value: https://hackathon.guvi.in/api/updateHoneyPotFinalResult
+    healthCheckPath: /
